@@ -1,0 +1,10 @@
+- [x] Modify OnboardingWrapper to pass PageController to Onboarding1, Onboarding2, Onboarding3
+- [x] Update Onboarding1 to accept PageController and use it for Next and Back buttons
+- [x] Update Onboarding2 to accept PageController and use it for Next and Back buttons
+- [x] Update Onboarding3 to accept PageController (for consistency, though not used)
+- [x] Test the onboarding flow to ensure navigation to 3rd page works
+- [x] Add onTap to 'My Profile' ListTile in account_screen.dart to navigate to '/profile'
+- [x] Add onTap to 'Settings' ListTile in account_screen.dart to navigate to '/settings'
+- [x] Add 'Add Account' button to account_screen.dart with mock onPressed
+- [x] Add 'Delete Account' button to account_screen.dart with mock onPressed
+- [x] Test navigation to my profile and functionality of account-related buttons
