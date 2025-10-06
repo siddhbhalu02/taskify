@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taskify001/screens/auth/signup_screen.dart';
 import '../../widgets/custom_button.dart';
 import '../../utils/app_textstyles.dart';
 import '../../routes/app_routes.dart';
@@ -15,7 +16,7 @@ class Onboarding3 extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            const Icon(Icons.check, size: 80),
+            const Icon(Icons.rocket_launch, size: 80, color: Colors.blue),
             const SizedBox(height: 32),
             Text('Start Your Journey', style: AppTextStyles.h2, textAlign: TextAlign.center),
             const SizedBox(height: 12),
@@ -23,7 +24,7 @@ class Onboarding3 extends StatelessWidget {
             const Spacer(),
             CustomButton(
               label: 'Start Your Journey',
-              onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.signup),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupScreen())),
             ),
             const SizedBox(height: 20),
           ],

@@ -16,7 +16,7 @@ class Onboarding1 extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            const Icon(Icons.check_circle_outline, size: 80),
+            const Icon(Icons.assignment_turned_in, size: 80, color: Colors.blue),
             const SizedBox(height: 32),
             Text('Effortless Task Management', style: AppTextStyles.h2, textAlign: TextAlign.center),
             const SizedBox(height: 12),

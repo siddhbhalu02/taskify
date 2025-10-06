@@ -41,14 +41,17 @@ class AccountScreen extends StatelessWidget {
           title: const Text('Settings'),
           onTap: () => Navigator.pushNamed(context, '/settings'),
         ),
-        ListTile(leading: const Icon(Icons.lock), title: const Text('Privacy & Security')),
+        ListTile(
+          leading: const Icon(Icons. exit_to_app,color: Colors.red,),
+          title: const Text('logout', style: TextStyle(color: Colors.red)),
+          onTap: () => Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false)
+        ),
         const Spacer(),
         CustomButton(
           label: 'Add Account',
-          onPressed: () {
-            // For demo, just show a snackbar
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Add Account (mock)')));
-          },
+          onPressed:
+            () => Navigator.pushNamed(context, '/signup')
+          ,
         ),
         const SizedBox(height: 8),
         TextButton(

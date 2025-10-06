@@ -30,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     List<Widget> pages = [
     HomeTab(
       onNotificationTap: () {
-        setState(() => idx = 2); // 👈 Go to Inbox tab
+        setState(() => idx = 2);
       },
     ),
     const CalendarScreen(),
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const AccountScreen(),
   ];
     return Scaffold(
-      appBar: AppBar(title: Text('Taskify', style: AppTextStyles.h2), actions: [IconButton(icon: const Icon(Icons.more_vert), onPressed: () {})]),
+      appBar: AppBar(title: Text('Taskify', style: AppTextStyles.h2), ),
       body: pages[idx],
       bottomNavigationBar: TakifyBottomBar(
         currentIndex: idx,

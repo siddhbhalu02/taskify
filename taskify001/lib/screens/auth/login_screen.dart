@@ -38,31 +38,33 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Login', style: AppTextStyles.h2), centerTitle: true),
-      body: Padding(
-        padding: const EdgeInsets.all(18.0),
-        child: Column(children: [
-          const SizedBox(height: 6),
-          Text('Welcome Back!', style: AppTextStyles.h1),
-          const SizedBox(height: 18),
-          CustomTextField(hint: 'Email', controller: _email),
-          const SizedBox(height: 12),
-          CustomTextField(hint: 'Password', controller: _pass, obscure: true),
-          const SizedBox(height: 10),
-          Align(
-            alignment: Alignment.centerRight,
-            child: TextButton(onPressed: () => Navigator.pushNamed(context, AppRoutes.forgot), child: const Text('Forgot Password?')),
-          ),
-          const SizedBox(height: 8),
-          CustomButton(
-            label: 'Login',
-            onPressed: () => _login(context),
-          ),
-          const SizedBox(height: 12),
-          TextButton(
-            onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.signup),
-            child: const Text('Don\'t have an account? Sign Up'),
-          ),
-        ]),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(18.0),
+          child: Column(children: [
+            const SizedBox(height: 6),
+            Text('Welcome Back!', style: AppTextStyles.h1),
+            const SizedBox(height: 18),
+            CustomTextField(hint: 'Email', controller: _email),
+            const SizedBox(height: 12),
+            CustomTextField(hint: 'Password', controller: _pass, obscure: true),
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(onPressed: () => Navigator.pushNamed(context, AppRoutes.forgot), child: const Text('Forgot Password?')),
+            ),
+            const SizedBox(height: 8),
+            CustomButton(
+              label: 'Login',
+              onPressed: () => _login(context),
+            ),
+            const SizedBox(height: 12),
+            TextButton(
+              onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.signup),
+              child: const Text('Don\'t have an account? Sign Up'),
+            ),
+          ]),
+        ),
       ),
     );
   }

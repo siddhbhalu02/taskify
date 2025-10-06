@@ -16,7 +16,7 @@ class Onboarding2 extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 40),
-            const Icon(Icons.star_border, size: 80),
+            const Icon(Icons.groups, size: 80, color: Colors.blue),
             const SizedBox(height: 32),
             Text('Organize & Collaborate', style: AppTextStyles.h2, textAlign: TextAlign.center),
             const SizedBox(height: 12),

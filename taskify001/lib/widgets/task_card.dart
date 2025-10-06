@@ -18,6 +18,16 @@ class TaskCard extends StatelessWidget {
         return 'High';
     }
   }
+  Color priorityColor(TaskPriority p) {
+    switch (p) {
+      case TaskPriority.low:
+        return Colors.green;
+      case TaskPriority.medium:
+        return Colors.blue;
+      default:
+        return Colors.red;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +56,7 @@ class TaskCard extends StatelessWidget {
                     const SizedBox(height: 6),
                     Text(
                       '${priorityText(task.priority)} • Due ${task.dueDate.day}/${task.dueDate.month}/${task.dueDate.year}',
-                      style: const TextStyle(color: AppColors.grey),
+                      style: TextStyle(color: priorityColor(task.priority)),
                     ),
                   ],
                 ),
