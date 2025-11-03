@@ -1,3 +1,3 @@
-- [x] Update onboarding1.dart: Change icon to Icons.assignment_turned_in and add color
-- [x] Update onboarding2.dart: Change icon to Icons.groups and add color
-- [x] Update onboarding3.dart: Change icon to Icons.rocket_launch and add color
+- [x] Fix back button error and inability to add task in NewTaskScreen
+  - [x] Move route argument access from initState to didChangeDependencies
+  - [x] Ensure proper navigation and form handling

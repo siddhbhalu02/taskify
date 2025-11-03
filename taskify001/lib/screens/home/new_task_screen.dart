@@ -16,8 +16,15 @@ class NewTaskScreen extends StatefulWidget {
 class _NewTaskScreenState extends State<NewTaskScreen> {
   final _title = TextEditingController();
   final _desc = TextEditingController();
-  DateTime _due = DateTime.now().add(const Duration(days: 1));
+  late DateTime _due;
   TaskPriority _priority = TaskPriority.medium;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final initialDue = ModalRoute.of(context)?.settings.arguments as DateTime?;
+    _due = initialDue ?? DateTime.now().add(const Duration(days: 1));
+  }
 
   @override
   Widget build(BuildContext context) {

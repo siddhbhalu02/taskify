@@ -8,8 +8,7 @@ import '../../providers/task_provider.dart';
 import 'edit_task_screen.dart';
 
 class TaskDetailScreen extends StatefulWidget {
-  final Task? task;
-  const TaskDetailScreen({super.key, this.task});
+  const TaskDetailScreen({super.key});
 
   @override
   State<TaskDetailScreen> createState() => _TaskDetailScreenState();
@@ -21,7 +20,7 @@ class _TaskDetailScreenState extends State<TaskDetailScreen> {
   @override
   void initState() {
     super.initState();
-    task = widget.task ??
+    task = ModalRoute.of(context)?.settings.arguments as Task? ??
         Task(
           id: 'none',
           title: 'Untitled',

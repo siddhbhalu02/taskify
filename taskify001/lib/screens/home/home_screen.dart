@@ -22,8 +22,9 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  
+
   int idx = 0;
+  DateTime? selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() => idx = 2);
       },
     ),
-    const CalendarScreen(),
+    CalendarScreen(onDateSelected: (date) => setState(() => selectedDate = date)),
     const InboxScreen(),
     const ReportsScreen(),
     const AccountScreen(),
@@ -47,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppColors.black,
-        onPressed: () => Navigator.pushNamed(context, '/new'),
+        onPressed: () => Navigator.pushNamed(context, AppRoutes.newTask, arguments: selectedDate),
         child: const Icon(Icons.add, color: AppColors.white),
       ),
     );
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class HomeTab extends StatefulWidget {
-  final VoidCallback? onNotificationTap; // 👈 add this
+  final VoidCallback? onNotificationTap; 
 
   const HomeTab({super.key, this.onNotificationTap});
 
@@ -104,7 +105,7 @@ class _HomeTabState extends State<HomeTab> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(t.title),
-                          TextButton(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailScreen(task: t))), child: const Text('View task'))
+                          TextButton(onPressed: () => Navigator.pushNamed(context, AppRoutes.taskDetail, arguments: t), child: const Text('View task'))
                         ],
                       ),
                     ),
@@ -117,7 +118,7 @@ class _HomeTabState extends State<HomeTab> {
                     Task t = tasks[i];
                     return TaskCard(
                       task: t,
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => TaskDetailScreen(task: t))),
+                      onTap: () => Navigator.pushNamed(context, AppRoutes.taskDetail, arguments: t),
                     );
                   },
                   separatorBuilder: (_, __) => const SizedBox(height: 12),

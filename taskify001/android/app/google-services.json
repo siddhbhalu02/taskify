@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "747122732277",
+    "project_id": "taskify-e8cd7",
+    "storage_bucket": "taskify-e8cd7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:747122732277:android:bfeb3237a012ac501be9bc",
+        "android_client_info": {
+          "package_name": "com.example.taskify001"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3dhdioU7ZY2vk8TvsxKe-mFg1tHoeafc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

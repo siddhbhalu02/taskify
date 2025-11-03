@@ -15,24 +15,51 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
+  final _formKey = GlobalKey<FormState>();
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _pass = TextEditingController();
 
   void _signup(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
-    if (_email.text.isNotEmpty && _pass.text.length >= 4) {
+    if (_formKey.currentState!.validate()) {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
       userProvider.setUser(User(
         id: '2',
-        name: _name.text.isNotEmpty ? _name.text : 'New User',
+        name: _name.text,
         email: _email.text,
         phone: '',
         dob: '',
       ));
       Navigator.pushReplacementNamed(context, AppRoutes.home);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Provide valid credentials')));
     }
+  }
+
+  String? _validateName(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Name is required';
+    }
+    return null;
+  }
+
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Email is required';
+    }
+    final emailRegex = RegExp(r'^[^@]+@[^@]+\.[^@]+');
+    if (!emailRegex.hasMatch(value)) {
+      return 'Enter a valid email';
+    }
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length < 6) {
+      return 'Password must be at least 6 characters';
+    }
+    return null;
   }
 
   @override
@@ -42,26 +69,51 @@ class _SignupScreenState extends State<SignupScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Column(children: [
-            const SizedBox(height: 10),
-            Text('Welcome!', style: AppTextStyles.h1),
-            const SizedBox(height: 18),
-            CustomTextField(hint: 'User Name', controller: _name),
-            const SizedBox(height: 12),
-            CustomTextField(hint: 'Email', controller: _email),
-            const SizedBox(height: 12),
-            CustomTextField(hint: 'Password', controller: _pass, obscure: true),
-            const SizedBox(height: 18),
-            CustomButton(
-              label: 'Sign Up',
-              onPressed: () => _signup(context),
-            ),
-            const SizedBox(height: 12),
-            TextButton(
-              onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.login),
-              child: const Text('Already have an account? Login'),
-            ),
-          ]),
+          child: Form(
+            key: _formKey,
+            child: Column(children: [
+              const SizedBox(height: 10),
+              Text('Welcome!', style: AppTextStyles.h1),
+              const SizedBox(height: 18),
+              TextFormField(
+                controller: _name,
+                decoration: const InputDecoration(
+                  hintText: 'User Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _validateName,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _email,
+                decoration: const InputDecoration(
+                  hintText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _validateEmail,
+              ),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _pass,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  hintText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                validator: _validatePassword,
+              ),
+              const SizedBox(height: 18),
+              CustomButton(
+                label: 'Sign Up',
+                onPressed: () => _signup(context),
+              ),
+              const SizedBox(height: 12),
+              TextButton(
+                onPressed: () => Navigator.pushReplacementNamed(context, AppRoutes.login),
+                child: const Text('Already have an account? Login'),
+              ),
+            ]),
+          ),
         ),
       ),
     );
