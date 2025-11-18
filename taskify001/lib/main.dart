@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:taskify001/providers/team_provider.dart';
 import 'app.dart';
 import 'providers/user_provider.dart';
 import 'providers/task_provider.dart';
@@ -12,10 +13,13 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
+
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()..initializeDefaultUser()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
+
+        ChangeNotifierProvider(create: (_) => TeamProvider()), //
       ],
       child: const TakifyApp(),
     ),

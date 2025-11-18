@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb;
 import '../models/user_model.dart';
+import '../models/user_role.dart';
 
 class AuthService {
   final fb.FirebaseAuth _auth = fb.FirebaseAuth.instance;
@@ -11,27 +12,31 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    // Firebase Auth Create User
-    final cred = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+    try {
+      // 1. Create Firebase Auth user
+      final cred = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
 
-    final String uid = cred.user!.uid;
+      final String uid = cred.user!.uid;
 
-    // Create User model (your structure)
-    final newUser = User(
-      id: uid,
-      name: name,
-      email: email,
-      managerId: null,
-      role: 'manager',
-      createdAt: DateTime.now().toIso8601String(),
-    );
+      // 2. Build your User model safely
+      final newUser = User(
+        id: uid,
+        name: name,
+        email: email,
+        managerId: null,                // manager has no managerId
+        role: UserRole.manager,         // using enum safely
+        createdAt: DateTime.now().toIso8601String(),
+      );
 
-    // Save to Firestore
-    await _firestore.collection('users').doc(uid).set(newUser.toMap());
+      // 3. Save to Firestore using model.toMap()
+      await _firestore.collection('users').doc(uid).set(newUser.toMap());
 
-    return newUser;
+      return newUser;
+    } catch (e) {
+      throw Exception("Signup failed: $e");
+    }
   }
 }

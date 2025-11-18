@@ -1,15 +1,11 @@
+import 'user_role.dart';
+
 class User {
   final String id;
   final String name;
   final String email;
-
-  /// For employees: this holds the manager's ID.
-  /// For managers: this is null.
   final String? managerId;
-
-  /// "manager" or "employee"
-  final String role;
-
+  final UserRole role;
   final String createdAt;
 
   User({
@@ -26,7 +22,7 @@ class User {
     String? name,
     String? email,
     String? managerId,
-    String? role,
+    UserRole? role,
     String? createdAt,
   }) {
     return User(
@@ -45,7 +41,7 @@ class User {
       'name': name,
       'email': email,
       'managerId': managerId,
-      'role': role,
+      'role': role.value, // Save enum as string
       'createdAt': createdAt,
     };
   }
@@ -56,7 +52,7 @@ class User {
       name: map['name'],
       email: map['email'],
       managerId: map['managerId'],
-      role: map['role'],
+      role: UserRoleExtension.fromString(map['role']),
       createdAt: map['createdAt'],
     );
   }

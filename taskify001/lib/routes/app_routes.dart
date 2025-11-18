@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taskify001/screens/manager/add_member_page.dart';
+import '../screens/manager/manager_home_page.dart';
 import '../screens/splash_screen.dart';
 import '../screens/onboarding/onboarding_wrapper.dart';
 import '../screens/auth/login_screen.dart';
@@ -31,6 +33,8 @@ class AppRoutes {
   static const newTask = '/new';
   static const taskDetail = '/detail';
   static const editTask = '/edit';
+  static const managerHome='/manager';
+  static const addTeamMember = '/add-member';
 
   static Map<String, WidgetBuilder> routes = {
     splash: (ctx) => const SplashScreen(),
@@ -48,5 +52,7 @@ class AppRoutes {
     newTask: (ctx) => const NewTaskScreen(),
     taskDetail: (ctx) => const TaskDetailScreen(),
     editTask: (ctx) => const EditTaskScreen(),
+    managerHome: (_) => const ManagerHomePage(),
+    addTeamMember : (_)=> const AddMemberPage()
   };
 }

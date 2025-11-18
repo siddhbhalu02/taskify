@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/user_model.dart';
+import '../models/user_role.dart';
 
 class UserProvider with ChangeNotifier {
   User? _currentUser;
@@ -21,14 +22,14 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Initialize with default user (sample manager)
+  /// Initialize with a sample manager (only for testing)
   void initializeDefaultUser() {
     _currentUser = User(
       id: '1',
       name: 'Seedhant Bhalu',
       email: 'seedhantbhalu04@gmail.com',
-      managerId: null,       // Manager has no managerId
-      role: 'manager',       // "manager" or "employee"
+      managerId: null,
+      role: UserRole.manager,        // FIXED: using enum
       createdAt: DateTime.now().toIso8601String(),
     );
     notifyListeners();

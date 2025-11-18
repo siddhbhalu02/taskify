@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import '../../controllers/login_controller.dart';
 import '../../providers/user_provider.dart';
 import '../../routes/app_routes.dart';
+import '../../services/login_service.dart';
 import '../../utils/app_textstyles.dart';
 import '../../widgets/custom_button.dart';
+import '../../models/user_role.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -17,20 +19,34 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginController controller = LoginController();
   bool loading = false;
 
-  void handleLogin() async {
+  Future<void> handleLogin() async {
+    if (!controller.formKey.currentState!.validate()) return;
+
     setState(() => loading = true);
 
     try {
-      final user = await controller.login();
+      final user = await LoginService().loginUser(
+        controller.email.text.trim(),
+        controller.password.text.trim(),
+      );
 
-      if (user != null) {
-        Provider.of<UserProvider>(context, listen: false).setUser(user);
+      // Save user globally
+      Provider.of<UserProvider>(context, listen: false).setUser(user);
 
+      // Navigate based on role
+      if (user.role == UserRole.manager) {
+        Navigator.pushReplacementNamed(context, AppRoutes.managerHome);
+      } else if (user.role == UserRole.employee) {
         Navigator.pushReplacementNamed(context, AppRoutes.home);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Invalid user role detected.")),
+        );
       }
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
     }
 
     setState(() => loading = false);
@@ -53,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Text("Welcome Back!", style: AppTextStyles.h1),
               const SizedBox(height: 18),
 
-              // Email
+              // Email Field
               TextFormField(
                 controller: controller.email,
                 decoration: const InputDecoration(
@@ -64,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Password
+              // Password Field
               TextFormField(
                 controller: controller.password,
                 obscureText: true,
@@ -74,19 +90,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 validator: controller.validatePassword,
               ),
-
               const SizedBox(height: 14),
 
+              // Login Button
               CustomButton(
                 label: loading ? "Logging in..." : "Login",
-                onPressed: loading ? null : handleLogin,
+                onPressed: loading ? () {} : handleLogin,
+                filled: true,
               ),
 
               const SizedBox(height: 12),
 
               TextButton(
                 onPressed: () => Navigator.pushReplacementNamed(
-                    context, AppRoutes.signup),
+                  context,
+                  AppRoutes.signup,
+                ),
                 child: const Text("Don't have an account? Sign Up"),
               ),
             ],
