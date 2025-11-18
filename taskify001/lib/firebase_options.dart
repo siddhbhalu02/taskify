@@ -72,4 +72,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'taskify-e8cd7.firebasestorage.app',
     iosBundleId: 'com.example.taskify001',
   );
+
 }

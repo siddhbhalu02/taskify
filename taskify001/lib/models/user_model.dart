@@ -2,30 +2,40 @@ class User {
   final String id;
   final String name;
   final String email;
-  final String? phone;
-  final String? dob;
+
+  /// For employees: this holds the manager's ID.
+  /// For managers: this is null.
+  final String? managerId;
+
+  /// "manager" or "employee"
+  final String role;
+
+  final String createdAt;
 
   User({
     required this.id,
     required this.name,
     required this.email,
-    this.phone,
-    this.dob,
+    this.managerId,
+    required this.role,
+    required this.createdAt,
   });
 
   User copyWith({
     String? id,
     String? name,
     String? email,
-    String? phone,
-    String? dob,
+    String? managerId,
+    String? role,
+    String? createdAt,
   }) {
     return User(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
-      phone: phone ?? this.phone,
-      dob: dob ?? this.dob,
+      managerId: managerId ?? this.managerId,
+      role: role ?? this.role,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -34,8 +44,9 @@ class User {
       'id': id,
       'name': name,
       'email': email,
-      'phone': phone,
-      'dob': dob,
+      'managerId': managerId,
+      'role': role,
+      'createdAt': createdAt,
     };
   }
 
@@ -44,8 +55,9 @@ class User {
       id: map['id'],
       name: map['name'],
       email: map['email'],
-      phone: map['phone'],
-      dob: map['dob'],
+      managerId: map['managerId'],
+      role: map['role'],
+      createdAt: map['createdAt'],
     );
   }
 }

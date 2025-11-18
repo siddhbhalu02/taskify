@@ -21,14 +21,15 @@ class UserProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Initialize with default user
+  // Initialize with default user (sample manager)
   void initializeDefaultUser() {
     _currentUser = User(
       id: '1',
       name: 'Seedhant Bhalu',
       email: 'seedhantbhalu04@gmail.com',
-      phone: '9236547895',
-      dob: '21/05/2006',
+      managerId: null,       // Manager has no managerId
+      role: 'manager',       // "manager" or "employee"
+      createdAt: DateTime.now().toIso8601String(),
     );
     notifyListeners();
   }
