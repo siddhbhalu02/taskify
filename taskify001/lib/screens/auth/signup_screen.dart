@@ -24,7 +24,7 @@ class _SignupScreenState extends State<SignupScreen> {
       final newUser = await controller.signup();
 
       if (newUser != null) {
-        Provider.of<UserProvider>(context, listen: false).setUser(newUser);
+        await Provider.of<UserProvider>(context, listen: false).loadCurrentUser();
 
         Navigator.pushReplacementNamed(context, AppRoutes.home);
       }

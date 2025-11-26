@@ -31,7 +31,8 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       // Save user globally
-      Provider.of<UserProvider>(context, listen: false).setUser(user);
+      await Provider.of<UserProvider>(context, listen: false).loadCurrentUser();
+
 
       // Navigate based on role
       if (user.role == UserRole.manager) {

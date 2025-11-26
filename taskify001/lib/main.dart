@@ -16,7 +16,7 @@ void main() async {
 
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()..initializeDefaultUser()),
+        ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
 
         ChangeNotifierProvider(create: (_) => TeamProvider()), //

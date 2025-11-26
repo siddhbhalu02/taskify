@@ -18,30 +18,34 @@ class ManagerHomePage extends StatefulWidget {
 class _ManagerHomePageState extends State<ManagerHomePage> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = const [
-    AddMemberPage(),
-    TeamMembersPage(),
-    PendingTasksPage(),
-    AssignTaskPage(),
-    ManagerProfilePage(),
+  void navigateToTeamMembers() {
+    setState(() => _currentIndex = 1); // go to Team Members tab
+  }
+
+  late final List<Widget> _pages = [
+    // AddMemberPage is not const because it accepts a callback
+    AddMemberPage(onMemberAdded: navigateToTeamMembers),
+    const TeamMembersPage(),
+    const PendingTasksPage(),
+    const AssignTaskPage(),
+    const ManagerProfilePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _pages[_currentIndex],
+      // IndexedStack preserves each page's state (e.g. scroll position, form data)
+      body: IndexedStack(
+        index: _currentIndex,
+        children: _pages,
+      ),
 
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         type: BottomNavigationBarType.fixed,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-
+        onTap: (index) => setState(() => _currentIndex = index),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.person_add_alt_1),

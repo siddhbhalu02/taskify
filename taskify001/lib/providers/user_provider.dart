@@ -1,4 +1,7 @@
-import 'package:flutter/material.dart';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
+import 'package:flutter/foundation.dart';
 import '../models/user_model.dart';
 import '../models/user_role.dart';
 
@@ -7,31 +10,37 @@ class UserProvider with ChangeNotifier {
 
   User? get currentUser => _currentUser;
 
-  void setUser(User user) {
-    _currentUser = user;
-    notifyListeners();
-  }
+  Future<void> loadCurrentUser() async {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) return;
 
-  void updateUser(User updatedUser) {
-    _currentUser = updatedUser;
-    notifyListeners();
+    final snap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(firebaseUser.uid)
+        .get();
+
+    if (snap.exists) {
+      _currentUser = User.fromMap(snap.data()!);
+      notifyListeners();
+    }
   }
 
   void clearUser() {
     _currentUser = null;
     notifyListeners();
   }
+  /// Persist updated user to Firestore and update local state.
+  Future<void> updateUser(User updated) async {
+    if (updated.id.isEmpty) throw Exception('User id missing');
 
-  /// Initialize with a sample manager (only for testing)
-  void initializeDefaultUser() {
-    _currentUser = User(
-      id: '1',
-      name: 'Seedhant Bhalu',
-      email: 'seedhantbhalu04@gmail.com',
-      managerId: null,
-      role: UserRole.manager,        // FIXED: using enum
-      createdAt: DateTime.now().toIso8601String(),
-    );
+    // Write to Firestore
+    await FirebaseFirestore.instance.collection('users').doc(updated.id).set(updated.toMap());
+
+    // Update local
+    _currentUser = updated;
     notifyListeners();
   }
+
 }
+
+

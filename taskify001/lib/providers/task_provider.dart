@@ -1,73 +1,102 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../models/task_model.dart';
+import '../services/task_service.dart';
 
 class TaskProvider with ChangeNotifier {
-  List<Task> _tasks = [
-    Task(
-      id: 't1',
-      title: 'Project Proposal',
-      description:
-          'Design a clean and intuitive task manager. Smooth navigation and modern visual style.',
-      dueDate: DateTime.now().add(const Duration(days: 3)),
-      priority: TaskPriority.high,
-      status: TaskStatus.inProgress,
-      assignedTo: ['KD', 'SD'],
-    ),
-    Task(
-      id: 't2',
-      title: 'Database Connectivity',
-      description: 'Fix DB connection for production.',
-      dueDate: DateTime.now().subtract(const Duration(days: 10)),
-      priority: TaskPriority.medium,
-      status: TaskStatus.todo,
-      assignedTo: ['SD'],
-    ),
-    Task(
-      id: 't3',
-      title: 'Feature Deployment',
-      description: 'Deploy new features to staging.',
-      dueDate: DateTime.now().add(const Duration(days: 10)),
-      priority: TaskPriority.low,
-      status: TaskStatus.todo,
-      assignedTo: [],
-    ),
-  ];
+  final TaskService _service = TaskService();
 
+  List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
-  void addTask(Task task) {
-    _tasks.insert(0, task);
+  bool loading = false;
+  StreamSubscription<List<Task>>? _streamSub;
+
+  /// Start listening to manager tasks stream. Cancels previous subscription.
+  void startStreamForManager(String managerId) {
+    // cancel old
+    _streamSub?.cancel();
+    loading = true;
     notifyListeners();
+
+    _streamSub = _service.streamTasksForManager(managerId).listen((serverTasks) {
+      _tasks = serverTasks;
+      loading = false;
+      debugPrint('[TaskProvider] stream updated: ${_tasks.length} tasks');
+      notifyListeners();
+    }, onError: (err) {
+      loading = false;
+      debugPrint('[TaskProvider] stream error: $err');
+      notifyListeners();
+    });
   }
 
-  void updateTask(String id, Task updatedTask) {
-    final index = _tasks.indexWhere((t) => t.id == id);
-    if (index >= 0) {
-      _tasks[index] = updatedTask;
+  /// Stop stream (call on dispose or when switching managers)
+  void stopStream() {
+    _streamSub?.cancel();
+    _streamSub = null;
+  }
+
+  /// One-shot load (useful if you don't want streaming)
+  Future<void> loadForManager(String managerId) async {
+    loading = true;
+    notifyListeners();
+    try {
+      final server = await _service.fetchTasksForManager(managerId);
+      _tasks = server;
+      debugPrint('[TaskProvider] loaded tasks: ${_tasks.length}');
+    } catch (e) {
+      debugPrint('[TaskProvider] loadForManager error: $e');
+      rethrow;
+    } finally {
+      loading = false;
       notifyListeners();
     }
   }
 
-  void deleteTask(String id) {
+  Future<void> addTask(Task task) async {
+    await _service.createTask(task);
+    // if using stream, stream will update; otherwise reload
+  }
+
+  Future<void> updateTask(Task task) async {
+    await _service.updateTask(task);
+    // stream will reflect change if streaming
+  }
+
+  Future<void> updateTaskStatus(String id, TaskStatus status) async {
+    await _service.updateTaskStatus(id, status);
+  }
+
+  Future<void> deleteTask(String id) async {
+    await _service.deleteTask(id);
+    // optional local removal:
     _tasks.removeWhere((t) => t.id == id);
     notifyListeners();
   }
 
-  void markTaskComplete(String id) {
-    final index = _tasks.indexWhere((t) => t.id == id);
-    if (index >= 0) {
-      _tasks[index] = _tasks[index].copyWith(status: TaskStatus.completed);
-      notifyListeners();
-    }
+  /// simple client-side search + filters
+  List<Task> searchAndFilter({
+    String query = '',
+    TaskStatus? status,
+    TaskPriority? priority,
+    String? assignedTo,
+  }) {
+    final q = query.trim().toLowerCase();
+    return _tasks.where((t) {
+      final matchesQuery = q.isEmpty ||
+          t.title.toLowerCase().contains(q) ||
+          t.description.toLowerCase().contains(q);
+      final matchesStatus = status == null || t.status == status;
+      final matchesPriority = priority == null || t.priority == priority;
+      final matchesAssigned = assignedTo == null || t.assignedTo.contains(assignedTo);
+      return matchesQuery && matchesStatus && matchesPriority && matchesAssigned;
+    }).toList();
   }
 
-  List<Task> get completedTasks => _tasks.where((t) => t.status == TaskStatus.completed).toList();
-
-  List<Task> get pendingTasks => _tasks.where((t) => t.status != TaskStatus.completed).toList();
-
-  int get totalTasks => _tasks.length;
-
-  int get completedCount => completedTasks.length;
-
-  int get pendingCount => pendingTasks.length;
+  @override
+  void dispose() {
+    _streamSub?.cancel();
+    super.dispose();
+  }
 }

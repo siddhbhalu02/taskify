@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taskify001/screens/employee/employee_home_page.dart';
+import 'package:taskify001/screens/employee/employee_main_page.dart';
 import 'package:taskify001/screens/manager/add_member_page.dart';
 import '../screens/manager/manager_home_page.dart';
 import '../screens/splash_screen.dart';
@@ -42,7 +44,7 @@ class AppRoutes {
     login: (ctx) => const LoginScreen(),
     signup: (ctx) => const SignupScreen(),
     forgot: (ctx) => const ForgotPasswordScreen(),
-    home: (ctx) => const HomeScreen(),
+    home: (ctx) => const EmployeeMainPage(),
     calendar: (ctx) => const CalendarScreen(),
     inbox: (ctx) => const InboxScreen(),
     reports: (ctx) => const ReportsScreen(),

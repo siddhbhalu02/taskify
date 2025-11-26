@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../controllers/add_member_controller.dart';
 import '../../providers/user_provider.dart';
+import '../../providers/team_provider.dart';
 import '../../services/add_member_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../utils/app_textstyles.dart';
 
 class AddMemberPage extends StatefulWidget {
-  const AddMemberPage({super.key});
+  /// Optional callback used by ManagerHomePage to switch tabs
+  final VoidCallback? onMemberAdded;
+
+  const AddMemberPage({super.key, this.onMemberAdded});
 
   @override
   State<AddMemberPage> createState() => _AddMemberScreenState();
@@ -25,26 +29,56 @@ class _AddMemberScreenState extends State<AddMemberPage> {
     try {
       final manager = Provider.of<UserProvider>(context, listen: false).currentUser;
 
+      if (manager == null) {
+        throw Exception("Manager not found. Please login again.");
+      }
+
       await AddMemberService().addMember(
         name: controller.name.text.trim(),
         email: controller.email.text.trim(),
         password: controller.password.text.trim(),
-        managerId: manager!.id, // manager UID
+        managerId: manager.id, // manager UID
       );
+
+      // Refresh team members list so TeamMembersPage shows the new member immediately
+      try {
+        Provider.of<TeamProvider>(context, listen: false)
+            .fetchTeamMembers(manager.id);
+      } catch (_) {
+        // ignore: no-op; provider might not exist in some contexts
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Team member added successfully!")),
       );
 
-      Navigator.pop(context); // return to manager page
+      // Reset form
+      controller.name.clear();
+      controller.email.clear();
+      controller.password.clear();
 
+      // If a callback is provided (when inside bottom-nav ManagerHomePage),
+      // call it to switch to the Team Members tab. Otherwise fallback to route.
+      if (widget.onMemberAdded != null) {
+        widget.onMemberAdded!();
+      } else {
+        Navigator.pushReplacementNamed(context, "/teamMembers");
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
+        SnackBar(content: Text("Failed to add member: $e")),
       );
+    } finally {
+      setState(() => loading = false);
     }
+  }
 
-    setState(() => loading = false);
+  @override
+  void dispose() {
+    controller.name.dispose();
+    controller.email.dispose();
+    controller.password.dispose();
+    super.dispose();
   }
 
   @override
@@ -62,10 +96,8 @@ class _AddMemberScreenState extends State<AddMemberPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-
               const SizedBox(height: 20),
               Text("Enter Member Details", style: AppTextStyles.h1),
-
               const SizedBox(height: 20),
 
               TextFormField(
