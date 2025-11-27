@@ -48,28 +48,22 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
 
-      // 3) Persistently set role = manager in Firestore
-      //    This makes the change permanent across devices/sessions.
-      final usersRef = FirebaseFirestore.instance.collection('users').doc(current.id);
+      // NOTE: Removed the persistent role update logic that was forcing every user to 'manager'.
+      // The role is now read directly from the user document loaded in step 2.
 
-      try {
-        await usersRef.update({'role': UserRole.manager.value});
-      } on FirebaseException catch (e) {
-        // If update fails, continue but inform user — we still attempt to proceed.
-        // (This is likely due to rules permission; see security notes below.)
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Could not persist role change: ${e.message}')),
-          );
-        }
+      // 3) Navigate based on user role and clear back stack
+      if (!mounted) return;
+
+      final String route;
+      if (current.role == UserRole.manager) {
+        // Manager routes to ManagerHomePage
+        route = AppRoutes.managerHome;
+      } else {
+        // Employee routes to EmployeeMainPage (mapped to AppRoutes.home)
+        route = AppRoutes.home;
       }
 
-      // 4) Reload the user document so provider is in sync with persisted data
-      await userProv.loadCurrentUser();
-
-      // 5) Navigate to manager home and clear back stack
-      if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.managerHome, (r) => false);
+      Navigator.pushNamedAndRemoveUntil(context, route, (r) => false);
     } on Exception catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));

@@ -170,7 +170,7 @@ class _AddMemberScreenState extends State<AddMemberPage> {
                           child: ElevatedButton(
                             onPressed: _loading ? null : _handleAddMember,
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.black,
+                              backgroundColor: Colors.blue,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                             ),
                             child: _loading
@@ -179,7 +179,7 @@ class _AddMemberScreenState extends State<AddMemberPage> {
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                             )
-                                : const Text('Create Employee', style: TextStyle(fontSize: 16)),
+                                : const Text('Create Employee', style: TextStyle(fontSize: 16,color: Colors.white)),
                           ),
                         ),
 

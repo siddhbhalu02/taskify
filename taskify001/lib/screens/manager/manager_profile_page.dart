@@ -54,52 +54,63 @@ class _ManagerProfilePageState extends State<ManagerProfilePage> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                OutlinedButton.icon(
-                  icon: const Icon(Icons.logout),
-                  label: const Text('Sign out'),
-                  onPressed: () async {
-                    final ok = await showDialog<bool>(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text('Sign out'),
-                        content: const Text('Are you sure you want to sign out?'),
-                        actions: [
-                          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
-                          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Sign out')),
-                        ],
-                      ),
-                    );
-
-                    if (ok != true) return;
-
-                    // show progress while signing out
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (_) => const Center(child: CircularProgressIndicator()),
-                    );
-
-                    try {
-                      await AuthService().signOut();
-
-                      // clear local provider state
-                      Provider.of<UserProvider>(context, listen: false).clearUser();
-
-                      // close the loading dialog
-                      if (mounted) Navigator.of(context).pop();
-
-                      // navigate to login (replace route name with your login route if different)
-                      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
-                    } catch (e) {
-                      if (mounted) Navigator.of(context).pop(); // close loading
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign out failed: $e')));
-                    }
-                  },
-                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 14)),
-                ),
 
               ],
             ),
+            const SizedBox(height: 12),
+  OutlinedButton.icon(
+  icon: const Icon(Icons.logout, size: 20),
+  label: const Text(
+    'Sign out',
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: Colors.redAccent,
+    ),
+  ),
+  style: OutlinedButton.styleFrom(
+    foregroundColor: Colors.redAccent,
+    side: const BorderSide(color: Colors.redAccent, width: 1.5),
+    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(12),
+    ),
+  ),
+  onPressed: () async {
+    // 🔥 YOUR ORIGINAL FUNCTION CODE HERE — unchanged
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign out'),
+        content: const Text('Are you sure you want to sign out?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: const Text('Sign out')),
+        ],
+      ),
+    );
+
+    if (ok != true) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+
+    try {
+      await AuthService().signOut();
+      Provider.of<UserProvider>(context, listen: false).clearUser();
+
+      if (mounted) Navigator.of(context).pop();
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.login, (route) => false);
+    } catch (e) {
+      if (mounted) Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Sign out failed: $e')));
+    }
+  },
+),
+
           ],
         ),
       ),
