@@ -1,26 +1,16 @@
+// lib/utils/app_textstyles.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'app_colors.dart';
 
 class AppTextStyles {
   AppTextStyles._();
-  static TextStyle h1 = GoogleFonts.inter(
-    color: AppColors.black,
-    fontSize: 34,
-    fontWeight: FontWeight.w800,
-    letterSpacing: 0.5,
-  );
-  static TextStyle h2 = GoogleFonts.inter(
-    color: AppColors.black,
-    fontSize: 24,
-    fontWeight: FontWeight.w700,
-  );
-  static TextStyle body = GoogleFonts.inter(
-    color: AppColors.black,
-    fontSize: 16,
-  );
-  static TextStyle small = GoogleFonts.inter(
-    color: AppColors.grey,
-    fontSize: 13,
-  );
+
+  static const TextStyle h1 = TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Colors.black87);
+  static const TextStyle h2 = TextStyle(fontSize: 20, fontWeight: FontWeight.w600, color: Colors.black87);
+
+  // ADDED: h3 used by AddMemberPage
+  static const TextStyle h3 = TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.black87);
+
+  // Optional: other common styles
+  static const TextStyle body = TextStyle(fontSize: 14, color: Colors.black87);
+  static const TextStyle caption = TextStyle(fontSize: 12, color: Colors.grey);
 }

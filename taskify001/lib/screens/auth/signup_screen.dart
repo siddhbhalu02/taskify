@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../routes/app_routes.dart';
 import '../../utils/app_textstyles.dart';
 import '../../providers/user_provider.dart';
 import '../../controllers/signup_controller.dart';
 import '../../widgets/custom_button.dart';
+import '../../models/user_role.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -17,23 +20,52 @@ class _SignupScreenState extends State<SignupScreen> {
   final SignupController controller = SignupController();
   bool loading = false;
 
-  void handleSignup() async {
-    setState(() => loading = true);
+  Future<void> handleSignup() async {
+    if (!controller.formKey.currentState!.validate()) return;
 
+    setState(() => loading = true);
     try {
+      // Controller should create the Firebase Auth user and Firestore user doc
       final newUser = await controller.signup();
 
-      if (newUser != null) {
-        await Provider.of<UserProvider>(context, listen: false).loadCurrentUser();
-
-        Navigator.pushReplacementNamed(context, AppRoutes.home);
+      if (newUser == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Signup failed: no user returned')),
+        );
+        return;
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
 
-    setState(() => loading = false);
+      // Load the newly created user into provider
+      final userProv = Provider.of<UserProvider>(context, listen: false);
+      await userProv.loadCurrentUser();
+
+      // Persistently set role = manager in Firestore (so this account is a manager)
+      final usersRef = FirebaseFirestore.instance.collection('users').doc(newUser.id);
+      try {
+        await usersRef.update({'role': UserRole.manager.value});
+      } on FirebaseException catch (e) {
+        // If rules disallow update, inform user but continue
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Could not persist role change: ${e.message}')),
+          );
+        }
+      }
+
+      // Reload provider to pick up persisted role
+      await userProv.loadCurrentUser();
+
+      // Navigate to manager home and clear back stack
+      if (!mounted) return;
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.managerHome, (r) => false);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Signup failed: $e')));
+    } finally {
+      if (!mounted) return;
+      setState(() => loading = false);
+    }
   }
 
   @override
@@ -70,6 +102,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   border: OutlineInputBorder(),
                 ),
                 validator: controller.validateEmail,
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 12),
 
